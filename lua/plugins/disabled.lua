@@ -9,6 +9,7 @@ return {
       scroll = { enabled = false },
       animate = { enabled = false },
       terminal = { enabled = false },
+      explorer = { enabled = false },
     },
   },
 }
