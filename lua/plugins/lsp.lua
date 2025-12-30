@@ -3,7 +3,6 @@ return {
     "neovim/nvim-lspconfig",
     ---@class PluginLspOpts
     opts = {
-      ---@type lspconfig.options
       servers = {
         angularls = {},
         cssls = {},
@@ -12,6 +11,7 @@ return {
         html = {},
         ts_ls = {},
       },
+      inlay_hints = { enabled = false },
     },
   },
   {
