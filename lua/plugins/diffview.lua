@@ -2,12 +2,12 @@ return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "File History (all)" },
-      { "<leader>df", "<cmd>DiffviewFileHistory %<cr>", desc = "Current File History" },
-      { "<leader>dc", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
-      { "<leader>dr", "<cmd>DiffviewRefresh<cr>", desc = "Refresh Diffview" },
+      { "<leader>gdh", "<cmd>DiffviewFileHistory<cr>", desc = "File History (all)" },
+      { "<leader>gdf", "<cmd>DiffviewFileHistory %<cr>", desc = "Current File History" },
+      { "<leader>gdc", "<cmd>DiffviewClose<cr>", desc = "Close Diffview" },
+      { "<leader>gdr", "<cmd>DiffviewRefresh<cr>", desc = "Refresh Diffview" },
       {
-        "<leader>dm",
+        "<leader>gdm",
         function()
           local branch = vim.fn.input("Compare with branch/commit: ", "master")
           if branch ~= "" then
