@@ -16,6 +16,17 @@ return {
         end,
         desc = "Diffview Compare Branch",
       },
+      {
+        "<leader>gdb",
+        function()
+          local current = vim.fn.system("git branch --show-current"):gsub("%s+", "")
+          local branch = vim.fn.input("Compare with branch/commit: ", current)
+          if branch ~= "" then
+            vim.cmd("DiffviewOpen " .. branch)
+          end
+        end,
+        desc = "Diffview Compare (current branch prefill)",
+      },
     },
   },
 }
