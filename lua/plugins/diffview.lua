@@ -11,7 +11,7 @@ return {
         function()
           local branch = vim.fn.input("Compare with branch/commit: ", "master")
           if branch ~= "" then
-            vim.cmd("DiffviewOpen " .. branch)
+            vim.cmd("DiffviewOpen origin...HEAD")
           end
         end,
         desc = "Diffview Compare Branch",
