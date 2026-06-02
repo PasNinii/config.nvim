@@ -10,3 +10,6 @@ vim.keymap.set("n", "<C-p>", vim.cmd.cprev, { desc = "Previous Quickfix" })
 
 -- Copilot
 vim.keymap.set("n", "<leader>am", ":CopilotChatModels<CR>", { desc = "Open Copilot Git" })
+
+-- Preserve <C-d> half-page scroll (vim-visual-multi takes <C-d> for multi-cursor select-next)
+vim.keymap.set({ "n", "x" }, "<C-A-d>", "<C-d>", { desc = "Scroll half page down" })
