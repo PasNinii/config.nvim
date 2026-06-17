@@ -28,6 +28,7 @@ return {
         "json5",
         "lua",
         "typescript",
+        "python",
         "vim",
       },
     },
