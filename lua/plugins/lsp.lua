@@ -10,6 +10,10 @@ return {
         dprint = {},
         html = {},
         ts_ls = {},
+        -- python: pyright matches CI (repo uses pyright, [tool.pyright] in spindjango/pyproject.toml);
+        -- ruff LSP provides lint diagnostics / code actions consistent with ruff.toml
+        pyright = {},
+        ruff = {},
       },
       inlay_hints = { enabled = false },
     },
@@ -39,6 +43,9 @@ return {
       ensure_installed = {
         "stylua",
         "shellcheck",
+        "prettier", -- CI formatter for html/css/scss/yaml; was missing from PATH and Mason
+        "ruff", -- python lint + format (ruff.toml)
+        "pyright", -- python type-check LSP (matches CI pyright)
       },
     },
   },

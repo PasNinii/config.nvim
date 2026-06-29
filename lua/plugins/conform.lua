@@ -4,13 +4,19 @@ return {
   -- @type conform.setupOpts
   opts = {
     formatters_by_ft = {
-      javascript = { "dprint", "prettierd", "prettier", stop_after_first = true },
-      typescript = { "dprint", "prettierd", "prettier", stop_after_first = true },
-      html = { "dprint", "prettierd", "prettier", stop_after_first = true },
-      css = { "dprint", "prettierd", "prettier", stop_after_first = true },
-      scss = { "dprint", "prettierd", "prettier", stop_after_first = true },
-      json = { "dprint", "prettierd", "prettier", stop_after_first = true },
-      json5 = { "dprint", "prettierd", "prettier", stop_after_first = true },
+      -- dprint owns ts/js, json/json5, toml (see repo dprint.json + .pre-commit-config.yaml)
+      javascript = { "dprint" },
+      typescript = { "dprint" },
+      json = { "dprint" },
+      json5 = { "dprint" },
+      toml = { "dprint" },
+      -- prettier owns html/css/scss/yaml (see repo .prettierrc + .pre-commit-config.yaml)
+      html = { "prettier" },
+      css = { "prettier" },
+      scss = { "prettier" },
+      yaml = { "prettier" },
+      -- ruff owns python; mirror CI order: fix -> organize imports -> format (see ruff.toml)
+      python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
     },
   },
 }
