@@ -20,5 +20,31 @@ return {
         },
       },
     },
+    config = function(_, opts)
+      require("octo").setup(opts)
+
+      -- maplocalleader == leader (space), so <localleader>cc above is literally
+      -- <leader>cc. LazyVim binds <leader>cc to codelens on any LSP-attached
+      -- buffer, and the TS server attaches to the real file behind an Octo
+      -- review diff *after* Octo sets its mapping, silently overwriting it.
+      -- Re-apply Octo's review_diff mapping on every LspAttach for buffers
+      -- that belong to the active review so the comment binding always wins.
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("octo_review_diff_keymap_priority", { clear = true }),
+        callback = function(args)
+          local ok, reviews = pcall(require, "octo.reviews")
+          local review = ok and reviews.get_current_review()
+          if not review then
+            return
+          end
+          for _, file in ipairs(review.layout.files) do
+            if vim.tbl_contains(file.associated_bufs, args.buf) then
+              require("octo.utils").apply_mappings("review_diff", args.buf)
+              return
+            end
+          end
+        end,
+      })
+    end,
   },
 }

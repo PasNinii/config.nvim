@@ -31,7 +31,22 @@ return {
         css_variables = {},
         dprint = {},
         html = {},
-        ts_ls = {},
+        -- angularls also attaches to plain .ts files in Angular projects and
+        -- answers the same requests (references, hover, definitions), so
+        -- results show up twice. Skip ts_ls there and let angularls cover it.
+        ts_ls = {
+          root_dir = function(bufnr, on_dir)
+            if vim.fs.root(bufnr, { "angular.json", "nx.json" }) then
+              return
+            end
+            -- lockfile > .git > package.json > cwd: a lockfile-less scratch
+            -- project (e.g. a fresh `bun init` with no .git yet) otherwise
+            -- falls back to getcwd(), which can miss node_modules/typescript
+            -- entirely and make ts_ls use its own bundled TS version instead.
+            local root_markers = { "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock" }
+            on_dir(vim.fs.root(bufnr, { root_markers, { ".git" }, { "package.json" } }) or vim.fn.getcwd())
+          end,
+        },
         -- python: pyright matches CI (repo uses pyright, [tool.pyright] in spindjango/pyproject.toml);
         -- ruff LSP provides lint diagnostics / code actions consistent with ruff.toml
         pyright = {
