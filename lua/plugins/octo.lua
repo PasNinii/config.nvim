@@ -1,6 +1,10 @@
 return {
   {
     "pwntester/octo.nvim",
+    -- free <leader>gS for Snacks git_stash (LazyVim octo extra maps it to Octo Search)
+    keys = {
+      { "<leader>gS", false },
+    },
     opts = {
       -- maplocalleader == leader (space), so any <localleader>c* here is literally
       -- <leader>c*, colliding with LazyVim's reserved <leader>c (LSP code actions)
