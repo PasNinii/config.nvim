@@ -5,8 +5,8 @@ return {
   opts = {
     formatters_by_ft = {
       -- dprint owns ts/js, json/json5, toml (see repo dprint.json + .pre-commit-config.yaml)
-      javascript = { "dprint" },
-      typescript = { "dprint" },
+      javascript = { "dprint", "prettier" },
+      typescript = { "dprint", "prettier" },
       json = { "dprint" },
       json5 = { "dprint" },
       toml = { "dprint" },

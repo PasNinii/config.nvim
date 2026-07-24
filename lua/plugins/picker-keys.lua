@@ -1,10 +1,10 @@
--- Free <leader><space> (don't want Find Files there) and drop the duplicate cwd
--- find variant; <leader>ff (Root Dir) stays as the single find-files map.
+-- Keep file search anchored to the directory where Neovim was launched.
 return {
   {
     "folke/snacks.nvim",
     keys = {
       { "<leader><space>", false },
+      { "<leader>ff", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
       { "<leader>fF", false },
     },
   },
