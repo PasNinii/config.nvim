@@ -20,5 +20,10 @@ return {
       -- ruff owns python; mirror CI order: fix -> organize imports -> format (see ruff.toml)
       python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
     },
+    formatters = {
+      -- An unused import on save is usually one being typed, so keep F401 out of the
+      -- fixable set here; pre-commit still strips it (.vscode/ruff.toml does the same).
+      ruff_fix = { append_args = { "--unfixable", "F401" } },
+    },
   },
 }
