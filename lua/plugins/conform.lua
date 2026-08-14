@@ -11,7 +11,9 @@ return {
       json5 = { "dprint" },
       toml = { "dprint" },
       -- prettier owns html/css/scss/yaml (see repo .prettierrc + .pre-commit-config.yaml)
+      -- nvim detects Angular templates as `htmlangular` (@if/@for/*ngIf/ng-template)
       html = { "prettier" },
+      htmlangular = { "prettier" },
       css = { "prettier" },
       scss = { "prettier" },
       yaml = { "prettier" },
