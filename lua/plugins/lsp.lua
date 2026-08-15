@@ -32,11 +32,14 @@ return {
         -- spindjango/ and scripts/ each hold a pyproject.toml, so pyright roots itself
         -- on whichever one owns the file and reads that project's [tool.pyright] and venv.
         pyright = {
+          -- The client captures config.settings by reference before before_init runs and
+          -- sends that same table, so the interpreter has to be written into it in place.
           before_init = function(_, config)
             local py = python.venv_bin(config.root_dir, "python")
             if py then
-              config.settings = vim.tbl_deep_extend("force", config.settings or {}, {
-                python = { pythonPath = py },
+              config.settings = config.settings or {}
+              config.settings.python = vim.tbl_deep_extend("force", config.settings.python or {}, {
+                pythonPath = py,
               })
             end
           end,
