@@ -16,8 +16,12 @@ local diff_nav_group = vim.api.nvim_create_augroup("diff_nav_keys", { clear = tr
 local function set_diff_nav_keys()
   local buf = vim.api.nvim_get_current_buf()
   if vim.wo.diff then
-    vim.keymap.set("n", "gj", function() vim.cmd("normal! ]c") end, { buffer = buf, silent = true, desc = "Next diff change" })
-    vim.keymap.set("n", "gk", function() vim.cmd("normal! [c") end, { buffer = buf, silent = true, desc = "Prev diff change" })
+    vim.keymap.set("n", "gj", function()
+      vim.cmd("normal! ]c")
+    end, { buffer = buf, silent = true, desc = "Next diff change" })
+    vim.keymap.set("n", "gk", function()
+      vim.cmd("normal! [c")
+    end, { buffer = buf, silent = true, desc = "Prev diff change" })
   else
     pcall(vim.keymap.del, "n", "gj", { buffer = buf })
     pcall(vim.keymap.del, "n", "gk", { buffer = buf })
