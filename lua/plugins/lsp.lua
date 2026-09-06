@@ -11,22 +11,10 @@ return {
         css_variables = {},
         dprint = {},
         html = {},
-        -- angularls also attaches to plain .ts files in Angular projects and
-        -- answers the same requests (references, hover, definitions), so
-        -- results show up twice. Skip ts_ls there and let angularls cover it.
-        ts_ls = {
-          root_dir = function(bufnr, on_dir)
-            if vim.fs.root(bufnr, { "angular.json", "nx.json" }) then
-              return
-            end
-            -- lockfile > .git > package.json > cwd: a lockfile-less scratch
-            -- project (e.g. a fresh `bun init` with no .git yet) otherwise
-            -- falls back to getcwd(), which can miss node_modules/typescript
-            -- entirely and make ts_ls use its own bundled TS version instead.
-            local root_markers = { "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "bun.lockb", "bun.lock" }
-            on_dir(vim.fs.root(bufnr, { root_markers, { ".git" }, { "package.json" } }) or vim.fn.getcwd())
-          end,
-        },
+        -- mason-lspconfig enables every server installed in Mason unless it is excluded,
+        -- so python-lsp-server sitting in Mason attaches to python buffers next to
+        -- pyright + ruff and answers with its own black / pycodestyle / jedi results.
+        pylsp = { enabled = false },
         -- python: pyright matches CI (repo uses pyright, [tool.pyright] in spindjango/pyproject.toml);
         -- ruff LSP provides lint diagnostics / code actions consistent with ruff.toml
         -- spindjango/ and scripts/ each hold a pyproject.toml, so pyright roots itself
@@ -51,7 +39,25 @@ return {
             },
           },
         },
-        ruff = {},
+        -- ruff's enabled rule set comes from the binary as much as from ruff.toml,
+        -- so start the version the project pins. `cmd` is a function so it resolves
+        -- once per root, for the project that owns the file rather than for whichever
+        -- directory nvim happened to start in.
+        ruff = {
+          cmd = function(dispatchers, config)
+            local root = config and config.root_dir or vim.fn.getcwd()
+            local bin = python.venv_bin(root, "ruff") or "ruff"
+            return vim.lsp.rpc.start({ bin, "server" }, dispatchers)
+          end,
+          -- lspconfig roots ruff on `.git`, which reaches every python repo; leaving
+          -- on_dir uncalled keeps the client from starting where ruff has no config.
+          root_dir = function(bufnr, on_dir)
+            local root = python.ruff_root(vim.api.nvim_buf_get_name(bufnr))
+            if root then
+              on_dir(root)
+            end
+          end,
+        },
       },
       inlay_hints = { enabled = false },
     },
@@ -84,6 +90,7 @@ return {
         "prettier", -- CI formatter for html/css/scss/yaml; was missing from PATH and Mason
         "ruff", -- python lint + format (ruff.toml)
         "pyright", -- python type-check LSP (matches CI pyright)
+        "debugpy", -- python DAP adapter; nvim-dap-python's `debugpy-adapter` wrapper
       },
     },
   },

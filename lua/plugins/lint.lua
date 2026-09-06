@@ -16,6 +16,9 @@ end
 return {
   "mfussenegger/nvim-lint",
   opts = {
+    -- Each run spawns a fresh flake8 interpreter, and its checks gate commits,
+    -- so write time is frequent enough.
+    -- events = { "BufWritePost", "BufReadPost" },
     linters_by_ft = {
       python = { "flake8" },
     },

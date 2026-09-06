@@ -40,6 +40,22 @@ if not has_native_clipboard then
   }
 end
 
+-- nvim reads `htmlangular` off the first 40 lines of a template's content
+-- (@if/@for/*ngIf/ng-template/ng-content) and keeps the filename rule disabled
+-- upstream, so a template opening on plain markup lands on `html`: the html server
+-- attaches instead of angularls and the html parser highlights control-flow blocks
+-- as text. The angular.json/nx.json check keeps the rule inside Angular workspaces.
+local function angular_template(path)
+  return vim.fs.root(path, { "angular.json", "nx.json" }) and "htmlangular" or nil
+end
+
+vim.filetype.add({
+  pattern = {
+    [".*%.component%.html"] = angular_template,
+    [".*%.container%.html"] = angular_template,
+  },
+})
+
 vim.opt.termguicolors = true
 
 -- Loading a colorscheme clears every highlight group, and LazyVim picks one
