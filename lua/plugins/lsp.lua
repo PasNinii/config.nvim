@@ -9,17 +9,21 @@ return {
         angularls = {},
         cssls = {},
         css_variables = {},
-        dprint = {},
+        -- lspconfig lists python/markdown/rust among dprint's filetypes and declares no
+        -- workspace requirement, so the client starts single-file in every repo; a root
+        -- holding its config is what gives the server anything to answer with.
+        dprint = { workspace_required = true },
         html = {},
         -- mason-lspconfig enables every server installed in Mason unless it is excluded,
         -- so python-lsp-server sitting in Mason attaches to python buffers next to
         -- pyright + ruff and answers with its own black / pycodestyle / jedi results.
         pylsp = { enabled = false },
-        -- python: pyright matches CI (repo uses pyright, [tool.pyright] in spindjango/pyproject.toml);
+        -- python: basedpyright shares pyright's engine and reads [tool.pyright] in
+        -- spindjango/pyproject.toml, so diagnostics stay in step with CI;
         -- ruff LSP provides lint diagnostics / code actions consistent with ruff.toml
-        -- spindjango/ and scripts/ each hold a pyproject.toml, so pyright roots itself
-        -- on whichever one owns the file and reads that project's [tool.pyright] and venv.
-        pyright = {
+        -- spindjango/ and scripts/ each hold a pyproject.toml, so the server roots itself
+        -- on whichever one owns the file and reads that project's config and venv.
+        basedpyright = {
           -- The client captures config.settings by reference before before_init runs and
           -- sends that same table, so the interpreter has to be written into it in place.
           before_init = function(_, config)
@@ -32,9 +36,11 @@ return {
             end
           end,
           settings = {
-            python = {
+            basedpyright = {
               analysis = {
                 autoImportCompletions = true,
+                -- basedpyright ships "recommended" as its default strictness.
+                typeCheckingMode = "standard",
               },
             },
           },
@@ -89,7 +95,7 @@ return {
         "shellcheck",
         "prettier", -- CI formatter for html/css/scss/yaml; was missing from PATH and Mason
         "ruff", -- python lint + format (ruff.toml)
-        "pyright", -- python type-check LSP (matches CI pyright)
+        "basedpyright", -- python type-check LSP (pyright engine + add-import code actions)
         "debugpy", -- python DAP adapter; nvim-dap-python's `debugpy-adapter` wrapper
       },
     },

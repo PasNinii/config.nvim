@@ -1,3 +1,8 @@
+-- Upstream pyright exposes auto-import only through completion; the quick fix on an
+-- undefined name is a Pylance feature that basedpyright reimplements. LazyVim's python
+-- extra reads this to pick the server and disable the other one.
+vim.g.lazyvim_python_lsp = "basedpyright"
+
 -- Snacks animations
 -- Set to `false` to globally disable all snacks animations
 vim.g.snacks_animate = false
@@ -44,17 +49,25 @@ end
 -- (@if/@for/*ngIf/ng-template/ng-content) and keeps the filename rule disabled
 -- upstream, so a template opening on plain markup lands on `html`: the html server
 -- attaches instead of angularls and the html parser highlights control-flow blocks
--- as text. The angular.json/nx.json check keeps the rule inside Angular workspaces.
+-- as text. A component's template sits beside the .ts that declares it, which holds
+-- for both `foo.component.html` and the CLI's `foo.html`, and leaves src/index.html
+-- on `html`. The angular.json/nx.json check keeps the rule inside Angular workspaces.
 local function angular_template(path)
-  return vim.fs.root(path, { "angular.json", "nx.json" }) and "htmlangular" or nil
+  if not vim.fs.root(path, { "angular.json", "nx.json" }) then
+    return nil
+  end
+  return vim.uv.fs_stat((path:gsub("%.html$", ".ts"))) and "htmlangular" or nil
 end
 
 vim.filetype.add({
   pattern = {
-    [".*%.component%.html"] = angular_template,
-    [".*%.container%.html"] = angular_template,
+    [".*%.html"] = angular_template,
   },
 })
+
+-- nvim-treesitter registers each parser under the filetype it is named after, so
+-- `htmlangular` buffers parse as html until the angular parser claims them.
+vim.treesitter.language.register("angular", "htmlangular")
 
 vim.opt.termguicolors = true
 
