@@ -14,10 +14,6 @@ return {
         -- holding its config is what gives the server anything to answer with.
         dprint = { workspace_required = true },
         html = {},
-        -- mason-lspconfig enables every server installed in Mason unless it is excluded,
-        -- so python-lsp-server sitting in Mason attaches to python buffers next to
-        -- pyright + ruff and answers with its own black / pycodestyle / jedi results.
-        pylsp = { enabled = false },
         -- python: basedpyright shares pyright's engine and reads [tool.pyright] in
         -- spindjango/pyproject.toml, so diagnostics stay in step with CI;
         -- ruff LSP provides lint diagnostics / code actions consistent with ruff.toml
@@ -54,14 +50,6 @@ return {
             local root = config and config.root_dir or vim.fn.getcwd()
             local bin = python.venv_bin(root, "ruff") or "ruff"
             return vim.lsp.rpc.start({ bin, "server" }, dispatchers)
-          end,
-          -- lspconfig roots ruff on `.git`, which reaches every python repo; leaving
-          -- on_dir uncalled keeps the client from starting where ruff has no config.
-          root_dir = function(bufnr, on_dir)
-            local root = python.ruff_root(vim.api.nvim_buf_get_name(bufnr))
-            if root then
-              on_dir(root)
-            end
           end,
         },
       },
