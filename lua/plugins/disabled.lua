@@ -1,5 +1,7 @@
 return {
   { "folke/flash.nvim", enabled = false },
+  -- util.python.venv_bin already resolves the interpreter; this one also wants `fd`.
+  { "linux-cultist/venv-selector.nvim", enabled = false },
 
   {
     "folke/snacks.nvim",

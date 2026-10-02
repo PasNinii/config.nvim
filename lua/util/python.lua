@@ -48,45 +48,4 @@ function M.venv_bin(path, name)
   return nil
 end
 
---- @param pyproject string
---- @return boolean whether the file declares any [tool.ruff...] table
-local function declares_ruff(pyproject)
-  local ok, lines = pcall(io.lines, pyproject)
-  if not ok then
-    return false
-  end
-  for line in lines do
-    if line:match("^%s*%[tool%.ruff") then
-      return true
-    end
-  end
-  return false
-end
-
---- Root of the nearest project that opts into ruff, searching upward from `path`.
----
---- ruff's LSP roots itself on `.git`, so it otherwise starts in every python repo and
---- reports its own default rule set as diagnostics. Merely holding a pyproject.toml is
---- not an opt-in; the file has to carry a [tool.ruff] table.
----
---- @param path string? file or directory to search from
---- @return string? nil when no project above `path` configures ruff
-function M.ruff_root(path)
-  if not path or path == "" then
-    return nil
-  end
-  local configs = vim.fs.find({ "ruff.toml", ".ruff.toml", "pyproject.toml" }, {
-    path = path,
-    upward = true,
-    type = "file",
-    limit = math.huge,
-  })
-  for _, config in ipairs(configs) do
-    if not config:match("pyproject%.toml$") or declares_ruff(config) then
-      return vim.fs.dirname(config)
-    end
-  end
-  return nil
-end
-
 return M
