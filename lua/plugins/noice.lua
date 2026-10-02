@@ -1,19 +1,8 @@
 return {
   "folke/noice.nvim",
   opts = {
-    routes = {
-      -- basedpyright emits an LSP progress token on every re-analysis, i.e. on each burst
-      -- of typing, which noice renders bottom-right. Other servers keep their progress.
-      {
-        filter = {
-          event = "lsp",
-          kind = "progress",
-          cond = function(message)
-            return vim.tbl_get(message.opts, "progress", "client") == "basedpyright"
-          end,
-        },
-        opts = { skip = true },
-      },
-    },
+    -- basedpyright emits a progress token on every re-analysis, i.e. on each burst of
+    -- typing; diagnostics already show when a server is done, so the progress view is noise.
+    lsp = { progress = { enabled = false } },
   },
 }
