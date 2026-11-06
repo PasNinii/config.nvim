@@ -1,6 +1,11 @@
 return {
   {
     "sindrets/diffview.nvim",
+    -- left pane shows additions as deletions, filler lines drop the red block for a dim ╱
+    opts = { enhanced_diff_hl = true },
+    init = function()
+      vim.opt.fillchars:append({ diff = "╱" })
+    end,
     keys = {
       { "<leader>gdh", "<cmd>DiffviewFileHistory<cr>", desc = "File History (all)" },
       { "<leader>gdf", "<cmd>DiffviewFileHistory %<cr>", desc = "Current File History" },
